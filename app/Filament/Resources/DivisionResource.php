@@ -34,6 +34,11 @@ class DivisionResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('manager_id')
                     ->relationship('manager', 'id'),
+
+                Forms\Components\DatePicker::make('created_at')
+                    ->displayFormat('d/m/Y')
+                    ->native(false)
+                    ->required(),
             ]);
     }
 
