@@ -18,6 +18,7 @@ class DivisionResource extends Resource
     protected static ?string $model = Division::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -33,7 +34,7 @@ class DivisionResource extends Resource
                     ->relationship('company', 'name')
                     ->required(),
                 Forms\Components\Select::make('manager_id')
-                    ->relationship('manager', 'id'),
+                    ->relationship('manager', 'full_name'),
 
                 Forms\Components\DatePicker::make('created_at')
                     ->displayFormat('d/m/Y')

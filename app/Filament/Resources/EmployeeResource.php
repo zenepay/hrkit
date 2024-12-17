@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\EmployeeStatus;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
@@ -28,8 +29,13 @@ class EmployeeResource extends Resource
                     ->tabs([
                         Tabs\Tab::make('Employment')
                             ->schema([
-                                Forms\Components\TextInput::make('title_name')
-                                    ->maxLength(10),
+                                Forms\Components\Select::make('title_name')
+                                    ->options([
+                                        'mr' => __('Mr.'),
+                                        'mrs' => __('Mrs.'),
+                                        'miss' => __('Miss'),
+                                    ])
+                                    ->required(),
                                 Forms\Components\TextInput::make('first_name')
                                     ->required()
                                     ->maxLength(50),
@@ -46,8 +52,6 @@ class EmployeeResource extends Resource
                                     ->maxLength(30),
                                 Forms\Components\TextInput::make('full_name_th')
                                     ->maxLength(100),
-
-
                                 Forms\Components\Select::make('company_id')
                                     ->relationship('company', 'name')
                                     ->required(),
@@ -56,7 +60,7 @@ class EmployeeResource extends Resource
                                 Forms\Components\Select::make('department_id')
                                     ->relationship('department', 'name'),
                                 Forms\Components\Select::make('supervisor_id')
-                                    ->relationship('supervisor', 'id'),
+                                    ->relationship('supervisor', 'full_name'),
                                 Forms\Components\TextInput::make('staff_no')
                                     ->maxLength(20),
                                 Forms\Components\TextInput::make('como_code')
@@ -73,8 +77,8 @@ class EmployeeResource extends Resource
                                     ->maxLength(100),
                                 Forms\Components\DatePicker::make('profident_fund_join_date'),
                                 Forms\Components\DatePicker::make('profident_fund_leave_date'),
-                                Forms\Components\TextInput::make('status')
-                                    ->maxLength(20),
+                                Forms\Components\Select::make('status')
+                                    ->options(EmployeeStatus::class),
 
                                 Forms\Components\TextInput::make('onboarding_checklist'),
                                 Forms\Components\TextInput::make('tags'),
@@ -312,7 +316,8 @@ class EmployeeResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('updatedBy.name')
                     ->numeric()
                     ->sortable(),
