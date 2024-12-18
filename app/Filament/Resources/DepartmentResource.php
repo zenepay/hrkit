@@ -5,13 +5,16 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DepartmentResource\Pages;
 use App\Filament\Resources\DepartmentResource\RelationManagers;
 use App\Models\Department;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Symfony\Component\Yaml\Inline;
 
 class DepartmentResource extends Resource
 {
@@ -29,21 +32,33 @@ class DepartmentResource extends Resource
                     ->maxLength(100),
                 Forms\Components\TextInput::make('code')
                     ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('type')
-                    ->maxLength(20),
+                    ->maxLength(10)
+                    ->disabled(fn(string $operation) => $operation === 'edit'),
+                Forms\Components\Radio::make('type')
+                    ->options([
+                        'shop' => __('Shop'),
+                        'office' => __('Office'),
+                    ])->inline(),
                 Forms\Components\Select::make('company_id')
                     ->relationship('company', 'name')
+                    ->searchable()
+                    ->optionsLimit(5)
+                    ->preload()
                     ->required(),
                 Forms\Components\Select::make('division_id')
                     ->relationship('division', 'name')
                     ->required(),
                 Forms\Components\Select::make('manager_id')
-                    ->relationship('manager', 'id'),
+                    ->label(__('Manager'))
+                    ->relationship('manager', 'full_name')
+                    ->disabled(fn(string $operation, $state) => $operation === 'edit' && ! blank($state))
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('address')
                     ->columnSpanFull(),
+
             ]);
     }
 

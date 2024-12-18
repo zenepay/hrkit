@@ -41,7 +41,7 @@ class Division extends Model
 
     public function manager(): BelongsTo
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class, 'manager_id');
     }
 
     public function departments(): HasMany

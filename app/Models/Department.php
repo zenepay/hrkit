@@ -37,6 +37,7 @@ class Department extends Model
         'company_id' => 'integer',
         'division_id' => 'integer',
         'manager_id' => 'integer',
+
     ];
 
     public function division(): BelongsTo

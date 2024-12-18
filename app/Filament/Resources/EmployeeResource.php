@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EmployeeResource extends Resource
@@ -36,12 +37,16 @@ class EmployeeResource extends Resource
                                         'miss' => __('Miss'),
                                     ])
                                     ->required(),
-                                Forms\Components\TextInput::make('first_name')
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->formatStateUsing(fn(?Model $record) => $record?->first_name . ' ' . $record?->last_name)
+                                    ->maxLength(100),
+                                /*           Forms\Components\TextInput::make('first_name')
                                     ->required()
                                     ->maxLength(50),
                                 Forms\Components\TextInput::make('last_name')
                                     ->required()
-                                    ->maxLength(50),
+                                    ->maxLength(50), */
                                 Forms\Components\TextInput::make('nick_name')
                                     ->maxLength(30),
                                 Forms\Components\TextInput::make('first_name_th')
@@ -50,8 +55,6 @@ class EmployeeResource extends Resource
                                     ->maxLength(50),
                                 Forms\Components\TextInput::make('nick_name_th')
                                     ->maxLength(30),
-                                Forms\Components\TextInput::make('full_name_th')
-                                    ->maxLength(100),
                                 Forms\Components\Select::make('company_id')
                                     ->relationship('company', 'name')
                                     ->required(),
@@ -88,7 +91,8 @@ class EmployeeResource extends Resource
                                     ->numeric(),
                                 Forms\Components\DatePicker::make('end_date'),
                                 Forms\Components\Toggle::make('is_rehired')
-                                    ->required(),
+                                    ->required()
+                                    ->default(true),
                             ]),
                         Tabs\Tab::make('Personal')
                             ->schema([
