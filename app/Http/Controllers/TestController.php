@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class MyTestController extends Controller
+class TestController extends Controller
 {
     public function index()
     {

@@ -4,10 +4,19 @@
 			"path": "."
 		},
 		{
+			"path": "../sail_share"
+		},
+		{
+			"path": "../auth11"
+		},
+		{
+			"path": "../click"
+		},
+		{
 			"path": "../hrm"
 		},
 		{
-			"path": "../sail_share"
+			"path": "../services2go"
 		}
 	]
 }

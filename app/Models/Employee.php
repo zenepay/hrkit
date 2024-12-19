@@ -22,6 +22,7 @@ class Employee extends Model
         'supervisor_id' => 'integer',
         'position_id' => 'integer',
         'start_date' => 'date',
+        'probation_days' => 'integer',
         'pass_probation_date' => 'date',
         'profident_fund_join_date' => 'date',
         'profident_fund_leave_date' => 'date',

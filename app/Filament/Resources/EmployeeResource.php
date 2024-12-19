@@ -9,12 +9,15 @@ use App\Models\Employee;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class EmployeeResource extends Resource
 {
@@ -38,6 +41,8 @@ class EmployeeResource extends Resource
                                     ])
                                     ->required(),
                                 Forms\Components\TextInput::make('name')
+                                    ->label(__('Name'))
+
                                     ->required()
                                     ->formatStateUsing(fn(?Model $record) => $record?->first_name . ' ' . $record?->last_name)
                                     ->maxLength(100),
@@ -47,9 +52,11 @@ class EmployeeResource extends Resource
                                 Forms\Components\TextInput::make('last_name')
                                     ->required()
                                     ->maxLength(50), */
-                                Forms\Components\TextInput::make('nick_name')
+                                Forms\Components\TextInput::make('nick_name') // Nich name
+
                                     ->maxLength(30),
                                 Forms\Components\TextInput::make('first_name_th')
+                                    ->label(__('First name (Thai)'))
                                     ->maxLength(50),
                                 Forms\Components\TextInput::make('last_name_th')
                                     ->maxLength(50),
@@ -70,12 +77,25 @@ class EmployeeResource extends Resource
                                     ->maxLength(20),
                                 Forms\Components\Select::make('position_id')
                                     ->relationship('position', 'name'),
-                                Forms\Components\DatePicker::make('start_date'),
+                                Forms\Components\DatePicker::make('start_date')
+                                    ->afterStateUpdated(fn($state, Get $get, Set $set) =>
+                                    $set(
+                                        'pass_probation_date',
+                                        Carbon::parse($state)->addDays((int) $get('probation_days'))->format('Y-m-d')
+                                    ))->live(),
                                 Forms\Components\TextInput::make('probation_days')
                                     ->required()
                                     ->numeric()
-                                    ->default(120),
-                                Forms\Components\DatePicker::make('pass_probation_date'),
+                                    ->default(120)
+                                    ->afterStateUpdated(fn($state, Get $get, Set $set) =>
+                                    $set(
+                                        'pass_probation_date',
+                                        Carbon::parse($get('start_date'))->addDays((int) $state)->format('Y-m-d')
+                                    ))->live(onBlur: true),
+                                Forms\Components\DatePicker::make('pass_probation_date')
+                                    ->disabled()
+                                    ->buddhist()
+                                    ->displayFormat('d/m/Y'),
                                 Forms\Components\TextInput::make('security_hospital')
                                     ->maxLength(100),
                                 Forms\Components\DatePicker::make('profident_fund_join_date'),
@@ -182,13 +202,8 @@ class EmployeeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('first_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('full_name')
+                    ->label('Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nick_name')
                     ->searchable(),

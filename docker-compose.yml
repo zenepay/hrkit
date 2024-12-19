@@ -59,6 +59,7 @@ services:
         environment:
         - PMA_ARBITRARY=1
         - PMA_HOST=mysql
+        - PMA_PORT=${DB_PORT:-3306}
         - APACHE_HTTP_PORT_NUMBER=8891
         - UPLOAD_LIMIT=300M
         restart: always
